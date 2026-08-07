@@ -1,253 +1,227 @@
-# MOSEL — Scalable Marketplace Platform Architecture
+# MOSEL Architecture
+
+> **Engineering documentation for the architecture behind MOSEL — a modern modular marketplace platform.**
+
+---
 
 ## Overview
 
-MOSEL is a production-oriented marketplace platform engineered with a backend-first and systems-oriented philosophy.
+**MOSEL** is a production-oriented marketplace platform designed to support multiple business models within a single unified backend architecture.
 
-The platform is designed to support scalable service discovery, intelligent booking orchestration, analytics-driven ranking, monetization systems, and real-time interactions while maintaining strong architectural separation and long-term maintainability.
+Rather than focusing on a single vertical, MOSEL provides a flexible foundation capable of powering service marketplaces, commerce, bookings, business discovery, social engagement, promotions, and future platform expansion.
 
-This repository serves as a public architectural showcase of the engineering principles, backend structure, infrastructure decisions, and scalability considerations behind the MOSEL platform.
+This repository documents the architectural decisions, system design principles, and engineering approaches behind the platform.
 
-The full production repository remains private.
-
----
-
-# Problem Space
-
-Modern service marketplaces require significantly more than simple CRUD functionality.
-
-A scalable marketplace platform must solve problems involving:
-
-- Service discovery
-- Personalized recommendations
-- Intelligent ranking systems
-- Booking orchestration
-- Real-time communication
-- Analytics collection
-- Monetization infrastructure
-- Scalability under growing engagement
-- Maintainability as complexity increases
-
-MOSEL was designed to approach these challenges using modular backend architecture and infrastructure-aware engineering principles.
+> **Note**
+>
+> This repository intentionally contains **architecture documentation only**.
+>
+> The production source code is maintained in a separate private repository as MOSEL is being developed toward commercial deployment.
 
 ---
 
-# Architecture Philosophy
+# Project Vision
 
-The platform follows a modular monolith architecture emphasizing:
+Modern marketplaces often evolve into disconnected systems as new features are introduced.
 
-- Separation of concerns
-- Explicit system boundaries
-- Service-layer abstraction
-- Scalability-oriented backend design
-- Long-term maintainability
-- Infrastructure-aware engineering
+Booking systems become separate services.
 
-The backend is structured around clear responsibility layers:
+Commerce introduces another architecture.
 
-```txt
-Routes
-   ↓
+Social features become isolated.
+
+Advertising is added later.
+
+Analytics become an afterthought.
+
+MOSEL approaches this differently.
+
+The platform is designed as a unified ecosystem where every subsystem shares a common domain model while remaining modular enough to evolve independently.
+
+The long-term objective is to provide infrastructure capable of supporting businesses of different sizes without requiring architectural redesign as the platform grows.
+
+---
+
+# Core Platform Capabilities
+
+The current architecture supports the following domains:
+
+* Service Marketplace
+* Product Commerce
+* Appointment Booking
+* Business Discovery
+* Customer Reviews
+* Favorites
+* Social Feed
+* Promotions & Advertising
+* Recommendation Engine
+* Notifications
+* Wallet & Commerce Infrastructure
+* Analytics
+* Administrative Operations
+
+Each domain is implemented as an independent module while sharing common platform services and data models.
+
+---
+
+# Engineering Principles
+
+Several architectural principles guide the design of MOSEL.
+
+## Modular Monolith
+
+The platform is currently designed as a **modular monolith**.
+
+This approach provides:
+
+* simplified deployments
+* strong module boundaries
+* easier testing
+* transactional consistency
+* lower operational complexity
+
+Individual modules can later evolve into independent services if scaling requirements justify the transition.
+
+---
+
+## Domain-Driven Design
+
+Business capabilities are organized around domains rather than technical layers.
+
+Examples include:
+
+* Business Management
+* Booking
+* Commerce
+* Promotions
+* Feed
+* Notifications
+
+Each domain owns its own responsibilities and business rules while communicating through well-defined interfaces.
+
+---
+
+## Layered Architecture
+
+Each module follows a consistent request flow.
+
+```text
+Client
+    │
+    ▼
+REST API
+    │
 Controllers
-   ↓
+    │
 Services
-   ↓
-Infrastructure / Database / External Systems
+    │
+Repositories / Prisma
+    │
+PostgreSQL
 ```
 
-This structure allows:
-- isolated business logic
-- cleaner debugging
-- easier testing
-- maintainable scaling
-- future extraction into distributed services if necessary
+Business rules remain inside the service layer, keeping controllers lightweight and ensuring persistence logic remains isolated.
 
 ---
 
-# Core Platform Systems
+## Scalability First
 
-## Marketplace Infrastructure
+Although currently designed as a modular monolith, the architecture anticipates future growth.
 
-MOSEL includes systems supporting:
+Design decisions prioritize:
 
-- Business management
-- Service discovery
-- Geo-aware search
-- Booking lifecycle orchestration
-- Favorites & engagement systems
-- Repeat booking flows
-- Personalized recommendations
-
----
-
-## Feed & Ranking Infrastructure
-
-The platform includes a modular ranking engine designed to support:
-
-- Personalized content feeds
-- CTR-aware ranking
-- Session-aware engagement scoring
-- Time decay logic
-- Geo relevance
-- Revenue-aware scoring
-- Recommendation orchestration
-
-Ranking infrastructure is intentionally modular to allow continuous tuning without tightly coupling ranking logic to application flow.
+* clear module boundaries
+* stateless APIs
+* caching strategies
+* asynchronous processing
+* horizontal scalability
+* cloud deployment readiness
 
 ---
 
-## Analytics Infrastructure
+# Technology Stack
 
-The analytics pipeline supports ingestion and aggregation of:
-
-- Impressions
-- Clicks
-- Session activity
-- Engagement metrics
-- Feed interaction signals
-
-The architecture separates:
-- analytics writes
-- analytics reads
-- ranking evaluation
-
-to improve maintainability and scalability.
+| Layer           | Technology    |
+| --------------- | ------------- |
+| Backend         | Node.js       |
+| Language        | TypeScript    |
+| Framework       | Express.js    |
+| ORM             | Prisma ORM    |
+| Database        | PostgreSQL    |
+| Cache           | Redis         |
+| API Style       | REST          |
+| Authentication  | JWT (planned) |
+| Infrastructure  | Docker        |
+| Version Control | Git & GitHub  |
 
 ---
 
-## Real-Time Infrastructure
+# Repository Structure
 
-MOSEL integrates authenticated Socket.IO infrastructure supporting:
+```text
+docs/
+│
+├── 01-system-overview.md
+├── 02-business-domain.md
+├── 03-architecture.md
+├── 04-api-design.md
+├── 05-authentication.md
+├── 06-database-design.md
+├── 07-booking-engine.md
+├── 08-commerce-engine.md
+├── 09-feed-engine.md
+├── 10-recommendation-engine.md
+├── 11-notification-system.md
+├── 12-scalability.md
+└── 13-security.md
 
-- Real-time interactions
-- Room-based communication
-- Event-driven updates
-- Notification delivery
+diagrams/
+```
 
-The realtime layer is designed with scalability and modular integration in mind.
-
----
-
-# Infrastructure Considerations
-
-The platform incorporates infrastructure-aware backend decisions including:
-
-- Redis-backed caching
-- Queue-oriented analytics workflows
-- DTO-based API responses
-- Modular service orchestration
-- Centralized validation & error handling
-- Authentication-aware socket infrastructure
-
-The architecture prioritizes predictable backend behavior and scalable communication patterns.
+Each document focuses on a single architectural concern and explains the reasoning behind the design rather than implementation details.
 
 ---
 
-# Scalability Decisions
+# Documentation Roadmap
 
-Several architectural decisions were made specifically to support long-term scalability:
-
-## Modular Monolith Design
-
-The system remains modular while avoiding premature microservice complexity.
-
-Benefits include:
-- simpler deployment
-- lower operational overhead
-- faster iteration
-- clearer debugging
-
-while preserving future extraction capability.
-
----
-
-## Redis Integration
-
-Redis is used to support:
-- caching
-- session-aware ranking
-- budget state tracking
-- feed optimization
-- high-frequency access patterns
+| Document              | Purpose                                                         |
+| --------------------- | --------------------------------------------------------------- |
+| System Overview       | Introduces the platform and its high-level architecture         |
+| Business Domain       | Describes the core business entities and relationships          |
+| Architecture          | Explains application structure and module interactions          |
+| API Design            | Covers REST principles, endpoint organization, and request flow |
+| Authentication        | Identity, authorization, and access control                     |
+| Database Design       | Data modeling and relational structure                          |
+| Booking Engine        | Scheduling architecture and conflict prevention                 |
+| Commerce Engine       | Wallets, escrow, payouts, and financial workflows               |
+| Feed Engine           | Social feed generation and ranking concepts                     |
+| Recommendation Engine | Personalization and content discovery                           |
+| Notification System   | Event-driven notification architecture                          |
+| Scalability           | Performance optimization and future scaling strategy            |
+| Security              | Validation, authorization, auditing, and secure system design   |
 
 ---
 
-## Ranking Isolation
+# Repository Purpose
 
-Ranking systems are separated from transport and controller logic to allow:
-- experimentation
-- tuning
-- future ML integration
-- maintainable scoring evolution
+This repository exists to document the engineering decisions behind MOSEL's architecture.
 
----
+Its objectives are to:
 
-# Tech Stack
+* demonstrate architectural thinking
+* document design decisions
+* communicate system structure
+* serve as a long-term engineering reference
+* showcase scalable backend design practices
 
-## Backend
-
-- Node.js
-- TypeScript
-- Express.js
-- PostgreSQL
-- Prisma ORM
-- Redis
-- Socket.IO
+Implementation details and proprietary business logic are intentionally excluded.
 
 ---
 
-## Engineering Workflow
+## License
 
-- Git & GitHub
-- Docker-based development workflows
-- WSL2 (Ubuntu)
-- Environment-based configuration
-- Structured module organization
+This repository is provided for educational and architectural reference purposes.
 
----
+All architectural documentation is © Elshamah Baraka.
 
-# Engineering Priorities
-
-The platform is engineered around:
-
-- maintainability
-- scalability
-- backend clarity
-- infrastructure awareness
-- ranking flexibility
-- modularity
-- explicit architectural boundaries
-
-The focus is not simply feature delivery, but sustainable systems engineering.
-
----
-
-# Future Scaling Direction
-
-Planned long-term engineering exploration includes:
-
-- distributed service extraction
-- event-driven architecture expansion
-- deeper analytics infrastructure
-- recommendation system evolution
-- observability tooling
-- performance optimization
-- cloud-native deployment workflows
-- infrastructure automation
-
----
-
-# Disclaimer
-
-This repository intentionally focuses on architectural concepts, engineering decisions, and backend structure.
-
-The production implementation, proprietary business logic, monetization systems, and operational infrastructure remain private.
-
----
-
-# Author
-
-Elshamah Baraka  
-Backend & Systems Engineer
-
-Focused on scalable backend systems, platform architecture, infrastructure-aware engineering, and distributed systems thinking.
+The production implementation of MOSEL remains proprietary and is not included in this repository.
